@@ -47,6 +47,6 @@ export async function getStaticProps() {
 
   return {
     props: { samples },
-    // revalidate: 60, // ISR - Refreshes content every 60 seconds
+    revalidate: false, // No revalidation, so it only fetches on build
   };
 }
