@@ -10,6 +10,7 @@ export default function NavBar() {
         </Typography>
         <Button color="inherit" component={Link} href="/">Home</Button>
         <Button color="inherit" component={Link} href="/projects">Projects</Button>
+        <Button color="inherit" component={Link} href="/writing-samples">Writing Samples</Button>
         <Button color="inherit" component={Link} href="/contact">Contact</Button>
       </Toolbar>
     </AppBar>
