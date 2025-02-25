@@ -1,7 +1,24 @@
 import { sanityClient } from '@/lib/sanityClient';
 import { Container, Typography, Card, CardMedia, CardContent, Button } from '@mui/material';
+import { cache } from 'react';
 
-export default function WritingSamples({ samples }) {
+// Fetch data at build time (SSG)
+const getWritingSamples = cache(async () =>
+  sanityClient.fetch(
+    `*[_type == "writingSample"]{ 
+      _id, 
+      title, 
+      description, 
+      "previewImageUrl": previewImage.asset->url, 
+      "pdfUrl": pdf.asset->url 
+    }`,
+    { next: { revalidate: false } } // Fetch only at build time
+  )
+);
+
+const WritingSamplesPage = async () => {
+  const samples = await getWritingSamples();
+
   return (
     <Container>
       <Typography variant="h3" textAlign="center" gutterBottom>
@@ -18,7 +35,7 @@ export default function WritingSamples({ samples }) {
             {sample.pdfUrl && (
               <Button 
                 variant="contained" 
-                color="primary" 
+                color="secondary" 
                 href={sample.pdfUrl} 
                 target="_blank" 
                 sx={{ mt: 2 }}
@@ -31,22 +48,6 @@ export default function WritingSamples({ samples }) {
       ))}
     </Container>
   );
-}
+};
 
-// Fetch data with SSG + ISR
-export async function getStaticProps() {
-  const samples = await sanityClient.fetch(
-    `*[_type == "writingSample"]{ 
-      _id, 
-      title, 
-      description, 
-      "previewImageUrl": previewImage.asset->url, 
-      "pdfUrl": pdf.asset->url 
-    }`
-  );
-
-  return {
-    props: { samples },
-    revalidate: false, // No revalidation, so it only fetches on build
-  };
-}
+export default WritingSamplesPage;
